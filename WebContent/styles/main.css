@@ -1,0 +1,519 @@
+@CHARSET "UTF-8";
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background-color: hsla(60, 93%, 88%, 0.4);
+	color: #FFFFFF;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size: 0.9em;
+}
+
+.note {
+	color: white;
+}
+
+ul {
+	list-style: none;
+}
+
+/**
+ * top header
+ */
+.top-header {
+	position: fixed;
+	align-items: center;
+	background: #111111;
+	box-shadow: 0px 2px 10px #333333;
+	display: flex;
+	height: 60px;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+}
+
+#avatar {
+	display: none;
+}
+
+.avatar {
+	background: #FFFFFF;
+	border-radius: 50%;
+	color: #333C4D;
+	height: 40px;
+	margin-right: 20px;
+	padding-left: 9px;
+	padding-top: 5px;
+	width: 40px;
+}
+
+/**
+ * top navigation
+ */
+.top-nav {
+	flex: 1;
+}
+
+.top-nav a {
+	color: #F9F9F9;
+	font-weight: 400;
+	margin-left: 20px;
+	text-decoration: none;
+}
+
+#logout-link {
+	color: #F9F9F9;
+	display: none;
+	font-weight: 400;
+	padding: 0 10px;
+	text-decoration: none;
+}
+
+#welcome-msg {
+	border-right: 1px solid #FFFFFF;
+	display: none;
+	padding-right: 10px;
+}
+
+/**
+ * main container
+ */
+.container {
+	margin: 60px auto;
+	max-width: 1000px;
+	min-width: 600px;
+}
+
+/**
+ * main header
+ */
+.container>header {
+	align-items: center;
+	height: 300px;
+	display: flex;
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
+	background-repeat: no-repeat;
+	background-size: 100%;
+	-webkit-animation: slider 15s linear infinite alternate;
+	animation: slider 15s linear infinite alternate;
+	-webkit-transform-origin: center center;
+	transform-origin: center center;
+}
+
+@-webkit-keyframes slider {   
+            0% {   
+                background-image: url(http://s1.1zoom.me/big0/878/The_Great_Wall_of_China_Fence_536754_1280x853.jpg) ;   
+            }   
+            25% {   
+                background-image: url(http://s1.1zoom.me/big0/868/393721-svetik.jpg) ;   
+  
+            }   
+            50% {   
+                background-image: url(http://s1.1zoom.me/big0/346/Autumn_Mountains_Spruce_Crag_537567_1280x800.jpg) ;   
+  
+            }   
+            75% {   
+                background-image: url(http://s1.1zoom.me/big0/637/323521-alexfas01.jpg);   
+  
+            }   
+            100% {   
+                background-image: url(http://s1.1zoom.me/big0/437/USA_Bridges_Roads_San_456431.jpg);   
+  
+            }   
+}   
+@keyframes slider {   
+            0% {   
+                background-image: url(http://s1.1zoom.me/big0/878/The_Great_Wall_of_China_Fence_536754_1280x853.jpg) ;   
+  
+            }   
+            25% {   
+                background-image: url(http://s1.1zoom.me/big0/868/393721-svetik.jpg) ;   
+  
+            }   
+            50% {   
+                background-image: url(http://s1.1zoom.me/big0/346/Autumn_Mountains_Spruce_Crag_537567_1280x800.jpg) ;   
+  
+            }   
+            75% {   
+                background-image: url(http://s1.1zoom.me/big0/637/323521-alexfas01.jpg);   
+  
+            }   
+            100% {   
+                background-image: url(http://s1.1zoom.me/big0/437/USA_Bridges_Roads_San_456431.jpg);   
+  
+            }   
+}  
+
+.container>header p {
+	border-left: 1px solid #FFFFFF;
+	font-weight: 400;
+	font-size: 2em;
+	line-height: 1em;
+	margin-left: 200px;
+	padding-left: 5px;
+}
+
+.container>header i {
+	color: #cc3300;
+}
+
+.container>header span {
+	color: #ff3300;
+}
+
+/**
+ * form
+ */
+#form {
+	margin: 0 auto;
+	text-align: center;
+}
+
+/**
+ * register form
+ */
+#register-form {
+	color: #624630;
+	margin: 0px auto;
+	overflow: auto;
+	padding: 40px;
+	width: 300px;
+	display: inline-block;
+}
+
+#register-form label {
+	display: inline-block;
+}
+
+#register-form input {
+	border: none;
+	display: inline-block;
+	margin-bottom: 10px;
+	padding: 8px;
+	width: 100%;
+	background-color: #f2f2f2;
+}
+
+#register-form button {
+	cursor: pointer;
+	float: right;
+	background-color: #F3BB43;
+	border: 2px solid white;
+	color: black;
+	padding: 4px 14px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 12px;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+
+#register-form button:hover {
+	background-color: #4CAF50; /* Green */
+	color: white;
+}
+
+#register-error {
+	clear: both;
+	color: white;
+	padding-top: 10px;
+}
+
+/**
+ * login form
+ */
+#login-form {
+	color: #624630;
+	margin: 0px auto;
+	overflow: auto;
+	padding: 40px;
+	width: 300px;
+	display: inline-block;
+}
+
+#login-form label {
+	display: block;
+}
+
+#login-form input {
+	border: none;
+	display: block;
+	margin-bottom: 10px;
+	padding: 8px;
+	width: 100%;
+	background-color: #f2f2f2;
+}
+
+#login-form button {
+	cursor: pointer;
+	float: right;
+	background-color: #F3BB43;
+	color: black;
+	padding: 4px 14px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 12px;
+	border: 2px solid white;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+
+#login-form button:hover {
+	background-color: #4CAF50; /* Green */
+	color: white;
+}
+
+#login-error {
+	clear: both;
+	color: white;
+	padding-top: 10px;
+}
+
+/**
+ * main section
+ */
+.main-section {
+	background: #202020;
+}
+
+/**
+ * aside
+ */
+#item-nav {
+	display: none;
+	float: left;
+	width: 180px;
+}
+
+.nav-icon {
+	color: #ff9900;
+	padding: 20px;
+	text-align: center;
+	display: inline-block;
+	width: 176px;
+}
+
+/**
+ * main navigation
+ */
+#nav-bar {
+	display: none;
+}
+
+.category {
+	margin: 0 auto;
+	text-align: center;
+	display: inline-block;
+}
+
+.category-btn {
+	background: none;
+	color: #FFFFFF;
+	display: block;
+	padding: 20px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	width: 408px;
+	border-bottom: 1px solid #FFFFFF;
+}
+
+.category-btn:hover {
+	background: rgba(255, 255, 255, 0.8);
+	color: #624630;
+}
+
+.category-btn.active {
+	background: #F2EBD9;
+	color: #624630;
+}
+
+.main-nav-btn {
+	background: none;
+	border-top: 1px solid #FFFFFF;
+	color: #FFFFFF;
+	display: block;
+	padding: 20px;
+	text-align: left;
+	text-decoration: none;
+}
+
+.main-nav-btn:hover {
+	background: rgba(255, 255, 255, 0.8);
+	color: #624630;
+}
+
+.main-nav-btn.active {
+	background: #F2EBD9;
+	color: #624630;
+}
+
+.main-nav-btn i {
+	width: 20px;
+}
+
+#search-bar {
+	display: none;
+	margin: 0px auto;
+	overflow: auto;
+	padding: 100px;
+	width: 300px;
+
+}
+
+#search-bar input {
+	float: right;
+	border: none;
+	display: block;
+	margin-bottom: 16px;
+	padding:10px;
+	width: 200%;
+	background-color: #f2f2f2;
+	font-size: 12px;
+}
+
+#search-bar button {
+	float: right;
+	cursor: pointer;
+	background-color: #F3BB43;
+	color: black;
+	padding: 4px 14px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 12px;
+	border: 2px solid white;
+	-webkit-transition-duration: 0.4s;
+	transition-duration: 0.4s;
+}
+
+/**
+ * item list
+ */
+#item-list {
+	background: #F2EBD9;
+	color: #624630;
+	display: none;
+	list-style: none;
+	margin-left: 180px;
+	min-height: 250px;
+	padding: 10px;
+}
+
+#item-list .notice {
+	font-size: 16px;
+	padding: 60px;
+	text-align: center;
+}
+
+/**
+ * item
+ */
+.item {
+	align-items: center;
+	border-bottom: 1px solid #FFFFFF;
+	display: flex;
+	margin: 10px;
+	padding: 15px;
+	transition: background-color 100ms linear;
+}
+
+.item:last-child {
+	border: none;
+}
+
+.item:hover {
+	background: rgba(255, 255, 255, 0.8);
+	transition: background-color 100ms linear;
+}
+
+.item img {
+	border: 1px solid #FFFFFF;
+	height: 80px;
+	width: 80px;
+}
+
+.item>div:first-of-type {
+	flex: 1;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.item-name {
+	color: #624630;
+	font-weight: 400;
+	text-decoration: none;
+}
+
+.item-name:hover {
+	text-decoration: underline;
+}
+
+.item-address {
+	line-height: 20px;
+	padding-right: 20px;
+	text-align: right;
+}
+
+.stars {
+	align-items: center;
+	display: flex;
+	padding-top: 10px;
+}
+
+.fav-link {
+	border-left: 1px solid #FFFFFF;
+	cursor: pointer;
+	line-height: 60px;
+	text-align: center;
+	width: 60px;
+}
+
+.fav-link:hover {
+	color: #F13F3F;
+}
+
+/**
+ * footer section
+ */
+footer {
+	background: #434343;
+	font-size: 0.8em;
+	height: 200px;
+	position: relative;
+}
+
+footer p {
+	text-align: center;
+}
+
+footer ul li a {
+	color: white;
+}
+
+footer ul li a: hover {
+	background-color: yellow;
+}
+
+footer p.title {
+	font-size: 1.2em;
+	padding: 15px;
+}
+
+footer ul {
+	align-items: center;
+	display: flex;
+	padding: 20px;
+}
+
+footer ul li {
+	flex: 1;
+}
