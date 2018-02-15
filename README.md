@@ -19,7 +19,9 @@ Goer Website URL: http://goer.mooo.com/recommendation/   testuse: username: 1111
 
 ## Powered By
 HTML5/CSS/JavaScirpt for front end. 
+
 Apache Tomcat/Java servlet for back end. 
+
 MySQL/MongoDB for database.
 
 ## Source Code
