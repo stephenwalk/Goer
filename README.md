@@ -18,11 +18,7 @@ A Java Web Service Development – Nearby Restaurant, Place, Event &amp; News Se
 Goer Website URL: http://goer.mooo.com/recommendation/   testuse: username: 1111 password: 2222
 
 ## Powered By
-HTML5/CSS/JavaScirpt for front end. 
-
-Apache Tomcat/Java servlet for back end. 
-
-MySQL/MongoDB for database.
+HTML5/CSS/JavaScirpt for front end. <BR/>Apache Tomcat/Java servlet for back end. <BR/>MySQL/MongoDB for database.
 
 ## Source Code
 WebContent & src, except src/offline
