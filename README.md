@@ -15,13 +15,13 @@ Goer is a comprehensive restaurant, place, event &amp; news search and recommend
 A Java Web Service Development – Nearby Restaurant, Place, Event &amp; News Search & Recommendation application
 
 ## Deployment
-Goer Website URL: http://goer.mooo.com/recommendation/  testuse: username: 1111 password: 2222
+Goer Website URL: http://goer.mooo.com/recommendation/   testuse: username: 1111 password: 2222
 
 ## Powered By
 HTML5/CSS/JavaScirpt for front end. Apache Tomcat/Java servlet for back end. MySQL/MongoDB for database.
 
 ## Source Code
-WebContent, src, except src/offline
+WebContent & src, except src/offline
 
 
 # Project 2: Amazon Item Recommendation
