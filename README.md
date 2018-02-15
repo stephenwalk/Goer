@@ -11,7 +11,7 @@ Goer is a comprehensive restaurant, place, event &amp; news search and recommend
 
 • Deployed on Amazon EC2 for superior flexibility, reliability and high performance.
 
-# Project 1: Item Based Recommendation
+# Project 1: Goer: Nearby Search & Recommendation
 A Java Web Service Development – Nearby Restaurant, Place, Event &amp; News Search & Recommendation application
 
 ## Deployment
