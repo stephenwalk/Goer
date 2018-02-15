@@ -1,8 +1,12 @@
 package external;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
@@ -12,6 +16,7 @@ import org.scribe.model.Verb;
 import org.scribe.oauth.OAuthService;
 
 import entity.Item;
+import entity.Item.ItemBuilder;
 
 public class YelpAPI implements ExternalAPI {
 	private static final String API_HOST = "api.yelp.com";
@@ -91,8 +96,75 @@ public class YelpAPI implements ExternalAPI {
 	}
 
 	@Override
-	public List<Item> search(double lat, double lon, String term) {
-		// TODO Auto-generated method stub
+	public List<Item> search(double lat, double lon, String city, String term) {
+		try {
+			JSONObject response = new JSONObject(searchForBusinessesByLocation(lat, lon, term));
+			JSONArray array = (JSONArray) response.get("businesses");
+			return getItemList(array);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
+
+	private List<Item> getItemList(JSONArray array) throws JSONException {
+		List<Item> restaurantList = new ArrayList<>();
+		for (int i = 0; i < array.length(); i++) {
+			ItemBuilder builder = new ItemBuilder();
+			JSONObject object = array.getJSONObject(i);
+			JSONObject location = (JSONObject) object.get("location");
+			JSONObject coordinate = (JSONObject) location.get("coordinate");
+			builder.setItemId(getStringFieldOrNull(object, "id"));
+			builder.setName(getStringFieldOrNull(object, "name"));
+			builder.setCity(getStringFieldOrNull(location, "city"));
+			builder.setState(getStringFieldOrNull(location, "state_code"));
+			builder.setRating(getNumericFieldOrNull(object, "rating"));
+			builder.setAddress(jsonArrayToString((JSONArray) location.get("display_address")));
+			builder.setLatitude(getNumericFieldOrNull(coordinate, "latitude"));
+			builder.setLongitude(getNumericFieldOrNull(coordinate, "longitude"));
+			JSONArray jsonArray = (JSONArray) object.get("categories");
+			Set<String> set = new HashSet<>();
+			for (int j = 0; j < jsonArray.length(); j++) {
+				JSONArray subArray = jsonArray.getJSONArray(j);
+				for (int k = 0; k < subArray.length(); k++) {
+					set.add(parseString(subArray.getString(k)));
+				}
+			}
+			builder.setCategories(set);
+			builder.setImageUrl(getStringFieldOrNull(object, "image_url"));
+			builder.setUrl(getStringFieldOrNull(object, "url"));
+			Item item = builder.build();
+			restaurantList.add(item);
+		}
+		return restaurantList;
+	}
+
+	private String getStringFieldOrNull(JSONObject event, String field) throws JSONException {
+		return event.isNull(field) ? null : event.getString(field);
+	}
+
+	private double getNumericFieldOrNull(JSONObject event, String field) throws JSONException {
+		return event.isNull(field) ? 0.0 : event.getDouble(field);
+	}
+
+	public static String parseString(String str) {
+		return str.replace("\"", "\\\"").replace("/", " or ");
+	}
+
+	private static String jsonArrayToString(JSONArray array) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (int i = 0; i < array.length(); i++) {
+				String obj = (String) array.get(i);
+				sb.append(obj);
+				if (i != array.length() - 1) {
+					sb.append(",");
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+	}
+
 }

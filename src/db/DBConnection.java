@@ -3,9 +3,11 @@ package db;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONArray;
+
 import entity.Item;
 
-public interface ItemDBConnection {
+public interface DBConnection {
 	/**
 	 * Close the connection.
 	 */
@@ -28,7 +30,7 @@ public interface ItemDBConnection {
 	public void unsetFavoriteItems(String userId, List<String> itemIds);
 
 	/**
-	 * Get the favorite item id for a user.
+	 * Get the favorite item ids for a user.
 	 * 
 	 * @param userId
 	 * @return itemIds
@@ -39,15 +41,38 @@ public interface ItemDBConnection {
 	 * Get the favorite items for a user.
 	 * 
 	 * @param userId
-	 * @return items
+	 * @return set of items
 	 */
 	public Set<Item> getFavoriteItems(String userId);
+
+	/**
+	 * Recommend items based on userId and geolocation
+	 * @param userId
+	 * @param latitude, longitude, city
+	 * @return array of items
+	 */
+	public JSONArray recommendItems(String userId,  double lat, double lon, String city);
+
+	/**
+	 * Gets item ids based on category
+	 * @param category
+	 * @return itemIds
+	 */
+	public Set<String> getItemIds(String category);
+
+	/**
+	 * Get the item json by id.
+	 * @param itemId
+	 * @param isVisited, set the visited field in json.
+	 * @return item
+	 */
+	public Item getItemById(String itemId);
 
 	/**
 	 * Gets categories based on item id
 	 * 
 	 * @param itemId
-	 * @return set of categories
+	 * @return categories
 	 */
 	public Set<String> getCategories(String itemId);
 
@@ -55,15 +80,14 @@ public interface ItemDBConnection {
 	 * Search items near a geolocation and a term (optional).
 	 * 
 	 * @param userId
-	 * @param lat
-	 * @param lon
+	 * @param latitude, longitude, city
 	 * @param term
 	 *            (Nullable)
 	 * @return list of items
 	 */
-	public List<Item> searchItems(String userId, double lat, double lon, String term);
-	
-    /**
+	public List<Item> searchItems(String userId, double lat, double lon, String city, String term);
+
+	/**
 	 * Save item into db.
 	 * 
 	 * @param item
@@ -76,7 +100,7 @@ public interface ItemDBConnection {
 	 * @param userId
 	 * @return full name of the user
 	 */
-	public String getFullname(String userId);
+	public String getFullName(String userId);
 
 	/**
 	 * Return whether the credential is correct.
@@ -88,7 +112,7 @@ public interface ItemDBConnection {
 	public boolean verifyLogin(String userId, String password);
 
 	/**
-	 * Return whether the user is already registered.
+	 * Return whether a user already registered.
 	 * 
 	 * @param userId
 	 * @return boolean
@@ -96,7 +120,7 @@ public interface ItemDBConnection {
 	public boolean exist(String userId);
 
 	/**
-	 * Insert a new user.
+	 * Insert a new user into db.
 	 * 
 	 * @param userId
 	 * @param password
@@ -105,5 +129,3 @@ public interface ItemDBConnection {
 	 */
 	public void insertUser(String userId, String password, String firstName, String lastName);
 }
-
-

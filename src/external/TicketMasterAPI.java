@@ -23,9 +23,9 @@ public class TicketMasterAPI implements ExternalAPI {
 	private static final String API_KEY = "wsiiXAVS9ZGd4ggq0Dr91RfgyodOlE98";
 
 	@Override
-	public List<Item> search(double lat, double lon, String term) {
+	public List<Item> search(double lat, double lon, String city, String term) {
 		// create a base url, based on API_HOST and SEARCH_PATH
-		String url = "http://" + API_HOST + SEARCH_PATH;
+		String url = "https://" + API_HOST + SEARCH_PATH;
 		// Convert geo location to geo hash with a precision of 4 (+- 20km)
 		String geoHash = GeoHash.encodeGeohash(lat, lon, 4);
 		if (term == null) {
@@ -33,12 +33,12 @@ public class TicketMasterAPI implements ExternalAPI {
 		}
 		// Encode term in url since it may contain special characters
 		term = urlEncodeHelper(term);
-		// Make your url query part like: "apikey=12345&geoPoint=abcd&keyword=music&radius=50"
+		// Make url query part like: "apikey=12345&geoPoint=abcd&keyword=music&radius=50"
 		String query = String.format("apikey=%s&geoPoint=%s&keyword=%s&radius=50", API_KEY, geoHash, term);
 		try {
-			// Open a HTTP connection between your Java application and TicketMaster based on url
+			// Open a HTTP connection between Java application and TicketMaster based on url
 			HttpURLConnection connection = (HttpURLConnection) new URL(url + "?" + query).openConnection();
-			// Set requrest method to GET
+			// Set request method to GET
 			connection.setRequestMethod("GET");
 
 			// Send request to TicketMaster and get response, response code could be returned directly
@@ -80,7 +80,7 @@ public class TicketMasterAPI implements ExternalAPI {
 		return term;
 	}
 	private void queryAPI(double lat, double lon) {
-		List<Item> itemList = search(lat, lon, null);
+		List<Item> itemList = search(lat, lon, null, null);
 		try {
 			for (Item item : itemList) {
 				JSONObject jsonObject = item.toJSONObject();
@@ -144,11 +144,10 @@ public class TicketMasterAPI implements ExternalAPI {
 				}
 			}
 
-			// Uses this builder pattern we can freely add fields.
+			// Uses this builder pattern so can freely add fields.
 			Item item = builder.build();
 			itemList.add(item);
 		}
-
 		return itemList;
 	}
 

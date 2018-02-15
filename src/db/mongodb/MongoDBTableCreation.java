@@ -28,11 +28,17 @@ public class MongoDBTableCreation {
 
 		// use 1 for ascending index , -1 for descending index
 		// Different to MySQL, users table in MongoDB also has history info.
+		// createIndex let search by "user_id"
 		db.getCollection("users").createIndex(new Document("user_id", 1), indexOptions);
 
 		// make sure item_id is unique.
 		// Different to MySQL, items table in MongoDB also has categories info.
+		// createIndex let search by "item_id"
 		db.getCollection("items").createIndex(new Document("item_id", 1), indexOptions);
+
+		// use a compound text index of name, address, etc. for search.
+		db.getCollection("items").createIndex(new Document().append("description", "text")
+				.append("snippet", "text").append("address", "text").append("name", "text"));
 
 		mongoClient.close();
 		System.out.println("Import is done successfully.");

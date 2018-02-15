@@ -1,7 +1,7 @@
 package rpc;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,11 +9,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONArray;
-
-import algorithm.GeoRecommendation;
-import db.mysql.RestaurantMySQLConnection;
-import entity.Item;
+import db.DBConnection;
+import db.DBConnectionFactory;
+import db.mysql.MySQLDBUtil;
 
 /**
  * Servlet implementation class RecommendItem
@@ -21,7 +19,7 @@ import entity.Item;
 @WebServlet("/recommendation")
 public class RecommendItem extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private static final DBConnection conn = DBConnectionFactory.getDBConnection();
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -34,32 +32,16 @@ public class RecommendItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
-		String category = request.getParameter("category");
-		if (category.equals("event")) {
+		Map<String, String[]> parametersMap = request.getParameterMap();
+		if (parametersMap.containsKey("user_id") && parametersMap.containsKey("category")) {
+			MySQLDBUtil.service = request.getParameter("category");
+			//MongoDBUtil.service = request.getParameter("category");
 			String userId = request.getParameter("user_id");
 			double lat = Double.parseDouble(request.getParameter("lat"));
 			double lon = Double.parseDouble(request.getParameter("lon"));
-			GeoRecommendation recommendation = new GeoRecommendation();
-			List<Item> items = recommendation.recommendItems(userId, lat, lon);
-			JSONArray result = new JSONArray();
-			try {
-				for (Item item : items) {
-					result.put(item.toJSONObject());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			RpcHelper.writeJsonArray(response, result);
-		} else {
-			JSONArray array = null;
-			RestaurantMySQLConnection conn = new RestaurantMySQLConnection();
-			if (request.getParameterMap().containsKey("user_id")) {
-				String userId = request.getParameter("user_id");
-				array = conn.recommendRestaurants(userId);
-			}
-			RpcHelper.writeJsonArray(response, array);
+			String city = request.getParameter("city");
+			RpcHelper.writeJsonArray(response, conn.recommendItems(userId, lat, lon, city));
 		}
 	}
 

@@ -7,19 +7,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import db.ItemDBConnection;
+import db.DBConnection;
 import db.DBConnectionFactory;
 import entity.Item;
 
 // Recommendation based on geo distance and similar categories.
-public class GeoRecommendation {
+public class GeoRecommendation implements Recommendation {
 
-	public List<Item> recommendItems(String userId, double lat, double lon) {
-		ItemDBConnection conn = DBConnectionFactory.getDBConnection();
+	public List<Item> recommendItems(String userId, String service, double lat, double lon, String city) {
+		DBConnection conn = DBConnectionFactory.getDBConnection();
 
-		Set<String> favoriteItems = conn.getFavoriteItemIds(userId); // step 1
-		// // db
-		// queries
+		Set<String> favoriteItems = conn.getFavoriteItemIds(userId); // step 1 db queries
 
 		Set<String> allCategories = new HashSet<>(); // step 2
 		for (String item : favoriteItems) {
@@ -28,20 +26,16 @@ public class GeoRecommendation {
 
 		allCategories.remove("Undefined"); // tune category set
 		if (allCategories.isEmpty()) {
-			//allCategories.add("");
 			return new ArrayList<>();
 		}
 
 		Set<Item> recommendedItems = new HashSet<>(); // step 3
 		for (String category : allCategories) {
-			List<Item> items = conn.searchItems(userId, lat, lon, category); // call
-			// external
-			// API
+			List<Item> items = conn.searchItems(userId, lat, lon, city, category); // call external API
 			recommendedItems.addAll(items);
 		}
 
-		// Student question: why we use list now instead of set?
-		// Answer: because we will have ranking now.
+		// use list since will have ranking now.
 		List<Item> filteredItems = new ArrayList<>(); // step 4
 		for (Item item : recommendedItems) {
 			if (!favoriteItems.contains(item.getItemId())) {
@@ -53,9 +47,6 @@ public class GeoRecommendation {
 		Collections.sort(filteredItems, new Comparator<Item>() {
 			@Override
 			public int compare(Item item1, Item item2) {
-				// Student question: can we make this ranking even better with
-				// more dimensions?
-				// What other feathers can be used here?
 				double distance1 = getDistance(item1.getLatitude(), item1.getLongitude(), lat, lon);
 				double distance2 = getDistance(item2.getLatitude(), item2.getLongitude(), lat, lon);
 				// return the increasing order of distance.

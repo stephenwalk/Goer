@@ -2,9 +2,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="description" content="Restaurant and Events Recommendation">
+<meta name="description" content="Goer: Restaurant, Place Event & News Recommendation">
 <meta name="author" content="Tianfeng Ye">
-<title>Restaurant and Events Recommendation</title>
+<title>Goer: Restaurant, Place, Event &amp; News Recommendation</title>
 <link
 	href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700'
 	rel='stylesheet' type='text/css'>
@@ -15,58 +15,61 @@
 <body>
 	<header class="top-header">
 		<nav class="top-nav">
-			<a href="#"><i class="fa fa-home"></i> Home</a> <a href="#"><i
-				class="fa fa-at"></i> Contact</a> <a href="#"><i
-				class="fa fa-smile-o"></i> About</a>
+			<a href="#">Home</a><a href="#">Contact</a><a href="#">About</a>
 		</nav>
-		<span id="welcome-msg"></span> <a id="logout-link"
-			href="LogoutServlet">Logout</a> <i id="avatar"
-			class="avatar fa fa-user fa-2x"></i>
+		<span id="welcome-msg1"></span> <span id="goer">GOER<span id="headerGoerSpan">Restaurant, Place, Event &amp; News Recommendation</span></span> <span
+			id="welcome-msg2"></span> <a id="logout-link" href="LogoutServlet"><i
+			class="fa fa-sign-out"></i> Logout</a> <i id="avatar"
+			class="avatar fa fa-user fa-2x" style="color: green"></i>
 	</header>
 
 	<div class="container">
 		<header>
-			 <div class="slider"> </div> 
-			
+			<div class="slider"></div>
+
 			<p>
-				<span><strong>Restaurant &amp; Event</strong></span> <br />
-				Recommendation <i class="fa fa-paper-plane" aria-hidden="true"></i>
+				<strong>GOER</strong> <i class="fa fa-paper-plane fa-spin"
+					aria-hidden="true"></i><br /> <span>Restaurant, Place, Event &amp; News</span>
+				<br /> <span>Recommendation</span>
 			</p>
 		</header>
 
 		<section class="main-section">
+			<div id="selection">
+				<a href="#" id="register-selection" class="selection-btn">SIGN
+					UP</a> <a href="#" id="login-selection" class="selection-btn active">LOGIN</a>
+			</div>
 			<div id="form">
 				<div id="register-form">
 					<input id="registername" name="registername" type="text"
-						placeholder="Username" required="required"> <input
+						placeholder="Username *" required="required"> <input
 						id="registerpassword" name="registerpassword" type="password"
-						placeholder="Password" required="required"> <input
+						placeholder="Set A Password *" required="required"> <input
 						id="re-password" name="re-password" type="password"
-						placeholder="Confirm Password" required="required"> <input
+						placeholder="Confirm Password *" required="required"> <input
 						id="firstname" name="firstname" type="text"
-						placeholder="First Name" required="required"> <input
-						id="lastname" name="lastname" type="text" placeholder="Last Name"
-						required="required">
+						placeholder="First Name *" required="required"> <input
+						id="lastname" name="lastname" type="text"
+						placeholder="Last Name *" required="required">
 					<button id="register-btn" type="button">
-						<i class="fa fa-user-plus"></i> Registration
+						<i class="fa fa-user-plus"></i> GET STARTED
 					</button>
 					<p id="register-error"></p>
 				</div>
 				<div id="login-form">
+					<p class="note">
+						<i class="fa fa-commenting"></i> <strong>NOTES:</strong><br />Please
+							feel free to sign up or use test username to login.<br />Username:
+							1111<br />Password: 2222
+					</p>
 					<input id="username" name="username" type="text"
-						placeholder="Username" required="required"> <input
+						placeholder="Username *" required="required"> <input
 						id="password" name="password" type="password"
-						placeholder="Password" required="required">
+						placeholder="Password *" required="required">
 					<button id="login-btn" type="button">
-						<i class="fa fa-sign-in"></i> Login
+						<i class="fa fa-sign-in"></i> LOGIN
 					</button>
 					<p id="login-error"></p>
-					<p class="note">
-						<i class="fa fa-commenting"></i> <strong>Notes:</strong>
-					</p>
-					<p class="note">You can register by your name or use test username to login.</p>
-					<p class="note">Username: 1111</p>
-					<p class="note">Password: 2222</p>
 				</div>
 			</div>
 
@@ -76,9 +79,15 @@
 				</div>
 				<div class="category">
 					<a href="#" id="restaurant-btn" class="category-btn active"> <i
-						class="fa fa-cutlery"></i> Restaurant
+						id="restaurant-cutlery" class="fa fa-cutlery fa-spin"></i>
+						Restaurant
+					</a> <a href="#" id="place-btn" class="category-btn"> <i
+						id="place-building" class="fa fa-building"></i>
+						Place
 					</a> <a href="#" id="event-btn" class="category-btn"> <i
-						class="fa fa-ticket"></i> Event
+						id="event-futbol" class="fa fa-futbol-o"></i> Event
+					</a> <a href="#" id="news-btn" class="category-btn"> <i
+						id="news-newspaper" class="fa fa-newspaper-o"></i> News
 					</a>
 
 				</div>
@@ -99,62 +108,78 @@
 				</nav>
 			</aside>
 			<div id="search-bar">
-					<input id="searchterm" name="searchterm" type="text"
-						placeholder="Search restaurant or event" autocomplete="on">
-					<button id="searchsubmit-btn" type="button">
-						<i class="fa fa-search"></i> Search
-					</button>
+				<input id="searchterm" name="searchterm" type="text"
+					placeholder="Search restaurant, place, event or news" required="required"
+					autocomplete="on">
+				<button id="searchsubmit-btn" type="button">
+					<i class="fa fa-search"></i> Search
+				</button>
 			</div>
 			<ul id="item-list">
-				<li class="item"><img alt="item image"
-					src="https://s3-media3.fl.yelpcdn.com/bphoto/EmBj4qlyQaGd9Q4oXEhEeQ/ms.jpg" />
+				<li class="item"><img alt="item image" src=""/>
 					<div>
-						<a class="item-name" href="#">{item_name}</a>
-						<p class="item-category">Vegetarian</p>
+						<a class="item-name" href="#"></a>
+						<p class="item-category"></p>
+						<p class="item-open"></p>
+						<p class="item-close"></p>
+						<p class="item-description"></p>
 						<div class="stars">
 							<i class="fa fa-star"></i> <i class="fa fa-star"></i> <i
 								class="fa fa-star"></i>
 						</div>
 					</div>
-					<p class="item-address">
-						699 Calderon Ave<br />Mountain View<br /> CA
-					</p>
+					<p class="item-address"></p>
 					<div class="fav-link">
 						<i class="fa fa-heart"></i>
 					</div></li>
 			</ul>
+			<div id="section-copyright">
+			<span id="section-left"><i class="fa fa-bookmark"></i> Developed by <a class="sectioncomments-link" href="mailto:tianfengyep@gmail.com">Tianfeng(Stephen) Ye</a></span>
+			<span id="section-right"><i class="fa fa-bookmark"></i> Powered by <a class="sectioncomments-link" href="https://www.javascript.com/" target="_blank">JavaScript</a>, 
+			<a class="sectioncomments-link" href="http://tomcat.apache.org/" target="_blank">Tomcat</a> &amp; 
+			<a class="sectioncomments-link" href="https://www.mysql.com/" target="_blank">MySQL</a></span>
+			</div>
 		</section>
 	</div>
 
 	<footer>
-		<p class="title">
-			<i class="fa fa-star"></i> All I Do
-		</p>
-		<p>Help you find the best restaurant and event around.</p>
+		<ul>
+			<li><p class='footer-goer'>GOER<span id="goerSpan">Restaurant, Place, Event &amp; News Recommendation</span></p></li>
+			<li><p id="footerTitle" class='title'>
+					<i class="fa fa-star fa-lg"></i> All Goer Does 
+				</p></li>
+			<li><p>
+					<a class='footer-link' href="http://www.facebook.com/sharer.php?s=100&amp;p[url]=http://goer.mooo.com/recommendation/;" onclick="window.open(this.href, 'facebookwindow','left=20,top=20,width=600,height=600,toolbar=0,resizable=1'); return false;"><i class="fa fa-facebook fa-lg"></i></a>&nbsp;&nbsp;&nbsp;
+					<a class='footer-link' href="http://twitter.com/intent/tweet?text=I like http://goer.mooo.com/recommendation/"><i class="fa fa-twitter fa-lg"></i></a>&nbsp;&nbsp;&nbsp;
+					<a class='footer-link' href="http://pinterest.com/pin/create/bookmarklet/?&url=http://goer.mooo.com/recommendation/&description=I like Goer" onclick="window.open(this.href, 'pinterestwindow','left=20,top=20,width=600,height=700,toolbar=0,resizable=1'); return false;"><i class="fa fa-pinterest fa-lg"></i></a>&nbsp;&nbsp;&nbsp;
+					<a class='footer-link' href="http://www.reddit.com/submit?url=http://goer.mooo.com/recommendation/&title=I like Goer" onclick="window.open(this.href, 'redditwindow','left=20,top=20,width=900,height=600,toolbar=0,resizable=1'); return false;"><i class="fa fa-reddit-alien fa-lg"></i></a>&nbsp;&nbsp;&nbsp;
+					<a class='footer-link' href="https://plus.google.com/share?url=http://goer.mooo.com/recommendation/" onclick="window.open(this.href, 'googlepluswindow','left=20,top=20,width=600,height=700,toolbar=0,resizable=1'); return false;"><i class="fa fa-google-plus fa-lg"></i></a>
+				</p></li>
+		</ul>
+		<div class='hr-line'></div>
 		<ul>
 			<li>
-				<p>
-					<i class="fa fa-location-arrow fa-2x"></i>
-				</p>
-				<p>1171 W 30TH ST, LA</p>
-			</li>
-			<li>
-				<p>
-					<i class="fa fa-inbox fa-2x"></i>
-				</p>
-				<p>
-					<a href="mailto:tianfengyep@gmail.com">tianfengyep@gmail.com</a>
+				<p id="myAddress">
+					<i class="fa fa-map-marker fa-2x"></i>
+					<span class="footerSpan">my address</span>
 				</p>
 			</li>
 			<li>
-				<p>
-					<i class="fa fa-phone-square fa-2x"></i>
+				<p id="myEmail">
+					<i class="fa fa-envelope-o fa-2x"></i>
+					<span class="footerSpan">my email</span>
 				</p>
-				<p>+1 213 400 9607</p>
+			</li>
+			<li>
+				<p id="myPhone">
+					<i class="fa fa-phone fa-2x"></i>
+					<span class="footerSpan">my phone</span>
+				</p>
 			</li>
 		</ul>
 	</footer>
 	<script src="https://rawgit.com/emn178/js-md5/master/build/md5.min.js"></script>
 	<script src="scripts/main.js"></script>
+	<script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
 </body>
 </html>

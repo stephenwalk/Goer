@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import db.ItemDBConnection;
+import db.DBConnection;
 import db.DBConnectionFactory;
 
 /**
@@ -20,7 +20,7 @@ import db.DBConnectionFactory;
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final ItemDBConnection conn = DBConnectionFactory.getDBConnection();
+	private static final DBConnection conn = DBConnectionFactory.getDBConnection();
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -41,7 +41,6 @@ public class RegisterServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		try {
 			JSONObject msg = new JSONObject();
 			// get request parameters for userID and password
@@ -56,7 +55,7 @@ public class RegisterServlet extends HttpServlet {
 				// setting session to expire in 10 minutes
 				session.setMaxInactiveInterval(10 * 60);
 				// Get user name
-				String name = conn.getFullname(user);
+				String name = conn.getFullName(user);
 				msg.put("status", "OK");
 				msg.put("user_id", user);
 				msg.put("name", name);
@@ -65,7 +64,6 @@ public class RegisterServlet extends HttpServlet {
 			}
 			RpcHelper.writeJsonObject(response, msg);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

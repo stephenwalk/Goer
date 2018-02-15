@@ -28,59 +28,123 @@ public class MySQLTableCreation {
 			// Step 2 Drop tables in case they exist.
 			Statement stmt = conn.createStatement();
 
-			String sql = "DROP TABLE IF EXISTS item_history";
+			String sql = "DROP TABLE IF EXISTS event_history";
 			stmt.executeUpdate(sql);
-			
+
 			sql = "DROP TABLE IF EXISTS restaurant_history";
 			stmt.executeUpdate(sql);
-			
+
+			sql = "DROP TABLE IF EXISTS new_history";
+			stmt.executeUpdate(sql);
+
+			sql = "DROP TABLE IF EXISTS place_history";
+			stmt.executeUpdate(sql);
+
 			sql = "DROP TABLE IF EXISTS categories";
 			stmt.executeUpdate(sql);
 
-			sql = "DROP TABLE IF EXISTS items";
+			sql = "DROP TABLE IF EXISTS events";
 			stmt.executeUpdate(sql);
-			
+
 			sql = "DROP TABLE IF EXISTS restaurants";
 			stmt.executeUpdate(sql);
-			
+
+			sql = "DROP TABLE IF EXISTS news";
+			stmt.executeUpdate(sql);
+
+			sql = "DROP TABLE IF EXISTS places";
+			stmt.executeUpdate(sql);
+
 			sql = "DROP TABLE IF EXISTS users";
 			stmt.executeUpdate(sql);
-			
+
 			// Step 3. Create new tables.
-			sql = "CREATE TABLE items " 
+			sql = "CREATE TABLE events " 
 					+ "(item_id VARCHAR(255) NOT NULL, " 
-					+ " name VARCHAR(255), "
+					+ "name VARCHAR(255), "
+					+ "date VARCHAR(255), " 
+					+ "byline VARCHAR(255), "
+					+ "categories VARCHAR(255), "
 					+ "city VARCHAR(255), " 
 					+ "state VARCHAR(255), " 
 					+ "country VARCHAR(255), "
 					+ "zipcode VARCHAR(255), " 
-					+ "rating FLOAT," + "address VARCHAR(255), " 
+					+ "address VARCHAR(255), " 
+					+ "rating FLOAT, "
 					+ "latitude FLOAT, "
-					+ " longitude FLOAT, " 
+					+ "longitude FLOAT, " 
 					+ "description VARCHAR(255), " 
 					+ "snippet VARCHAR(255), "
 					+ "snippet_url VARCHAR(255), " 
-					+ "image_url VARCHAR(255)," 
-					+ "url VARCHAR(255),"
-					+ " PRIMARY KEY ( item_id ))";
+					+ "image_url VARCHAR(255), " 
+					+ "url VARCHAR(255), "
+					+ "PRIMARY KEY ( item_id ))";
 			stmt.executeUpdate(sql);
 
 			sql = "CREATE TABLE restaurants "
-					+ "(business_id VARCHAR(255) NOT NULL, "
-					+ " name VARCHAR(255), " + "categories VARCHAR(255), "
-					+ "city VARCHAR(255), " + "state VARCHAR(255), "
-					+ "stars FLOAT," + "full_address VARCHAR(255), "
-					+ "latitude FLOAT, " + " longitude FLOAT, "
-					+ "image_url VARCHAR(255),"
-					+ "url VARCHAR(255),"
-					+ " PRIMARY KEY ( business_id ))";
+					+ "(item_id VARCHAR(255) NOT NULL, " 
+					+ "name VARCHAR(255), "
+					+ "date VARCHAR(255), " 
+					+ "byline VARCHAR(255), "
+					+ "categories VARCHAR(255), "
+					+ "city VARCHAR(255), " 
+					+ "state VARCHAR(255), " 
+					+ "country VARCHAR(255), "
+					+ "zipcode VARCHAR(255), " 
+					+ "address VARCHAR(255), " 
+					+ "rating FLOAT, "
+					+ "latitude FLOAT, "
+					+ "longitude FLOAT, " 
+					+ "description VARCHAR(255), " 
+					+ "snippet VARCHAR(255), "
+					+ "snippet_url VARCHAR(255), " 
+					+ "image_url VARCHAR(255), " 
+					+ "url VARCHAR(255), "
+					+ "PRIMARY KEY ( item_id ))";
 			stmt.executeUpdate(sql);
 
-			sql = "CREATE TABLE categories " 
+			sql = "CREATE TABLE news " 
 					+ "(item_id VARCHAR(255) NOT NULL, " 
-					+ " category VARCHAR(255), "
-					+ " PRIMARY KEY ( item_id, category), " 
-					+ "FOREIGN KEY (item_id) REFERENCES items(item_id))";
+					+ "name VARCHAR(255), "
+					+ "date VARCHAR(255), " 
+					+ "byline VARCHAR(255), "
+					+ "categories VARCHAR(255), "
+					+ "city VARCHAR(255), " 
+					+ "state VARCHAR(255), " 
+					+ "country VARCHAR(255), "
+					+ "zipcode VARCHAR(255), " 
+					+ "address VARCHAR(255), " 
+					+ "rating FLOAT, " 
+					+ "latitude FLOAT, "
+					+ "longitude FLOAT, " 
+					+ "description VARCHAR(255), " 
+					+ "snippet VARCHAR(255), "
+					+ "snippet_url VARCHAR(255), " 
+					+ "image_url VARCHAR(255), " 
+					+ "url VARCHAR(255), "
+					+ "PRIMARY KEY ( item_id ))";
+			stmt.executeUpdate(sql);
+
+			sql = "CREATE TABLE places " 
+					+ "(item_id VARCHAR(255) NOT NULL, " 
+					+ "name VARCHAR(255), "
+					+ "date VARCHAR(255), " 
+					+ "byline VARCHAR(255), "
+					+ "categories VARCHAR(255), "
+					+ "city VARCHAR(255), " 
+					+ "state VARCHAR(255), " 
+					+ "country VARCHAR(255), "
+					+ "zipcode VARCHAR(255), " 
+					+ "address VARCHAR(255), " 
+					+ "rating FLOAT, "
+					+ "latitude FLOAT, "
+					+ "longitude FLOAT, " 
+					+ "description VARCHAR(255), " 
+					+ "snippet VARCHAR(255), "
+					+ "snippet_url VARCHAR(255), " 
+					+ "image_url VARCHAR(255), " 
+					+ "url VARCHAR(255), "
+					+ "PRIMARY KEY ( item_id ))";
 			stmt.executeUpdate(sql);
 
 			sql = "CREATE TABLE users " 
@@ -90,26 +154,46 @@ public class MySQLTableCreation {
 					+ " PRIMARY KEY ( user_id ))";
 			stmt.executeUpdate(sql);
 
-			sql = "CREATE TABLE item_history " 
+			sql = "CREATE TABLE event_history " 
 					+ "(history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
 					+ " user_id VARCHAR(255) NOT NULL , " 
 					+ " item_id VARCHAR(255) NOT NULL, "
 					+ " last_favor_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " 
 					+ " PRIMARY KEY (history_id),"
-					+ "FOREIGN KEY (item_id) REFERENCES items(item_id),"
+					+ "FOREIGN KEY (item_id) REFERENCES events(item_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);
 
 			sql = "CREATE TABLE restaurant_history "
-					+ "(visit_history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
+					+ "(history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
 					+ " user_id VARCHAR(255) NOT NULL , "
-					+ " business_id VARCHAR(255) NOT NULL, "
+					+ " item_id VARCHAR(255) NOT NULL, "
 					+ " last_visited_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, "
-					+ " PRIMARY KEY (visit_history_id),"
-					+ "FOREIGN KEY (business_id) REFERENCES restaurants(business_id),"
+					+ " PRIMARY KEY (history_id),"
+					+ "FOREIGN KEY (item_id) REFERENCES restaurants(item_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);
-			
+
+			sql = "CREATE TABLE new_history " 
+					+ "(history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
+					+ " user_id VARCHAR(255) NOT NULL , " 
+					+ " item_id VARCHAR(255) NOT NULL, "
+					+ " last_favor_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " 
+					+ " PRIMARY KEY (history_id),"
+					+ "FOREIGN KEY (item_id) REFERENCES news(item_id),"
+					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
+			stmt.executeUpdate(sql);
+
+			sql = "CREATE TABLE place_history " 
+					+ "(history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
+					+ " user_id VARCHAR(255) NOT NULL , " 
+					+ " item_id VARCHAR(255) NOT NULL, "
+					+ " last_favor_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " 
+					+ " PRIMARY KEY (history_id),"
+					+ "FOREIGN KEY (item_id) REFERENCES places(item_id),"
+					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
+			stmt.executeUpdate(sql);
+
 			// Step 4: insert data
 			// Create a fake user
 			sql = "INSERT INTO users " + "VALUES (\"1111\", \"3229c1097c00d497a0fd282d586be050\", \"Stephen\", \"Yep\")";
@@ -118,8 +202,7 @@ public class MySQLTableCreation {
 			stmt.executeUpdate(sql);
 
 			System.out.println("Import is done successfully.");
-			
-			
+
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

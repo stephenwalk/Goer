@@ -11,7 +11,7 @@ import javax.servlet.http.HttpSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import db.ItemDBConnection;
+import db.DBConnection;
 import db.DBConnectionFactory;
 
 
@@ -21,7 +21,7 @@ import db.DBConnectionFactory;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final ItemDBConnection conn = DBConnectionFactory.getDBConnection();
+	private static final DBConnection conn = DBConnectionFactory.getDBConnection();
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -34,7 +34,6 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		try {
 			JSONObject msg = new JSONObject();
 			HttpSession session = request.getSession();
@@ -43,14 +42,13 @@ public class LoginServlet extends HttpServlet {
 				msg.put("status", "Session Invalid");
 			} else {
 				String user = (String) session.getAttribute("user");
-				String name = conn.getFullname(user);
+				String name = conn.getFullName(user);
 				msg.put("status", "OK");
 				msg.put("user_id", user);
 				msg.put("name", name);
 			}
 			RpcHelper.writeJsonObject(response, msg);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -59,7 +57,6 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		try {
 			JSONObject msg = new JSONObject();
 			// get request parameters for userID and password
@@ -71,7 +68,7 @@ public class LoginServlet extends HttpServlet {
 				// setting session to expire in 10 minutes
 				session.setMaxInactiveInterval(10 * 60);
 				// Get user name
-				String name = conn.getFullname(user);
+				String name = conn.getFullName(user);
 				msg.put("status", "OK");
 				msg.put("user_id", user);
 				msg.put("name", name);
@@ -80,7 +77,6 @@ public class LoginServlet extends HttpServlet {
 			}
 			RpcHelper.writeJsonObject(response, msg);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

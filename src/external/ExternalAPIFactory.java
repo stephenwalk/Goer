@@ -1,22 +1,22 @@
-
 package external;
 
 public class ExternalAPIFactory {
-	private static final String DEFAULT_PIPELINE = "ticketmaster";
+	private static final String DEFAULT_PIPELINE = "restaurant";
 
 	// Start different APIs based on the pipeline.
 	public static ExternalAPI getExternalAPI(String pipeline) {
 		switch (pipeline) {
 		case "restaurant":
 			return new YelpAPI(); 
+		case "place":
+			return new HereAPI();
+		case "event":
+			return new TicketMasterAPI();
+		case "new":
+			return new NewYorkTimesAPI(); 
 		case "job":
 			// return new LinkedInAPI(); 
 			return null;
-		case "new":
-			// return new NewYorkTimesAPI(); 
-			return null;
-		case "ticketmaster":
-			return new TicketMasterAPI();
 		default:
 			throw new IllegalArgumentException("Invalid pipeline " + pipeline);
 		}

@@ -1,8 +1,8 @@
 package rpc;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -13,12 +13,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import db.mysql.ItemMySQLConnection;
-import db.mysql.RestaurantMySQLConnection;
+import db.DBConnection;
+import db.DBConnectionFactory;
+import db.mysql.MySQLDBUtil;
 import entity.Item;
-import entity.Restaurant;
 
 
 /**
@@ -27,7 +28,7 @@ import entity.Restaurant;
 @WebServlet("/search")
 public class SearchItem extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+	private static final DBConnection conn = DBConnectionFactory.getDBConnection();
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -40,7 +41,6 @@ public class SearchItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 		//Create a PrintWriter from response such that we can add data to response.
 		// Get parameter from HTTP request
@@ -50,52 +50,31 @@ public class SearchItem extends HttpServlet {
 			response.setStatus(403);
 			return;
 		}
-
-		String userId = request.getParameter("user_id");
-		double lat = Double.parseDouble(request.getParameter("lat"));
-		double lon = Double.parseDouble(request.getParameter("lon"));
-		String term = request.getParameter("term"); // Term can be empty or null.
-		String category = request.getParameter("category");
-		if (category.equals("event")) {
-			ItemMySQLConnection conn = new ItemMySQLConnection();
-			List<Item> items = conn.searchItems(userId, lat, lon, term);
-			List<JSONObject> list = new ArrayList<>();
+		Map<String, String[]> parametersMap = request.getParameterMap();
+		if (parametersMap.containsKey("user_id") && parametersMap.containsKey("category")) {
+			MySQLDBUtil.service = request.getParameter("category");
+			//MongoDBUtil.service = request.getParameter("category");
+			String userId = request.getParameter("user_id");
+			double lat = Double.parseDouble(request.getParameter("lat"));
+			double lon = Double.parseDouble(request.getParameter("lon"));
+			String term = request.getParameter("term"); // Term can be empty or null.
+			String city = request.getParameter("city");
+			List<Item> items = conn.searchItems(userId, lat, lon, city, term);
 			Set<String> favorite = conn.getFavoriteItemIds(userId);
+			JSONArray array = new JSONArray();
 			try {
 				for (Item item : items) {
 					JSONObject obj = item.toJSONObject();
 					if (favorite != null) {
 						obj.put("favorite", favorite.contains(item.getItemId()));
 					}
-					list.add(obj);
+					array.put(obj);
 				}
-			} catch (Exception e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			JSONArray array = new JSONArray(list);
 			RpcHelper.writeJsonArray(response, array);
-		} else {
-			//JSONArray array = new JSONArray();
-			RestaurantMySQLConnection conn = new RestaurantMySQLConnection();
-
-			//DBConnection connection = new MongoDBConnection();
-			List<Restaurant> rest = conn.searchRestaurants(userId, lat, lon, term);
-			Set<String> favorite = conn.getVisitedRestaurants(userId);
-			List<JSONObject> list = new ArrayList<>();
-			try {
-				for (Restaurant re : rest) {
-					JSONObject obj = re.toJSONObject();
-					if (favorite != null) {
-						obj.put("is_visited", favorite.contains(re.getBusinessId()));
-					}
-					list.add(obj);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			RpcHelper.writeJsonArray(response, new JSONArray(list));
 		}
-
 	}
 
 	/**

@@ -34,6 +34,8 @@ public class Item {
 	private String itemId;
 	private String name;
 	private double rating;
+	private String date;
+	private String byline;
 	private String address;
 	private String city;
 	private String country;
@@ -52,6 +54,8 @@ public class Item {
 		private String itemId;
 		private String name;
 		private double rating;
+		private String date;
+		private String byline;
 		private String address;
 		private String city;
 		private String country;
@@ -78,6 +82,16 @@ public class Item {
 
 		public ItemBuilder setRating(double rating) {
 			this.rating = rating;
+			return this;
+		}
+
+		public ItemBuilder setDate(String date) {
+			this.date = date;
+			return this;
+		}
+
+		public ItemBuilder setByline(String byline) {
+			this.byline = byline;
 			return this;
 		}
 
@@ -157,6 +171,8 @@ public class Item {
 		this.itemId = builder.itemId;
 		this.name = builder.name;
 		this.rating = builder.rating;
+		this.date = builder.date;
+		this.byline = builder.byline;
 		this.address = builder.address;
 		this.city = builder.city;
 		this.country = builder.country;
@@ -178,6 +194,8 @@ public class Item {
 			obj.put("item_id", itemId);
 			obj.put("name", name);
 			obj.put("rating", rating);
+			obj.put("date", date);
+			obj.put("byline", byline);
 			obj.put("address", address);
 			obj.put("city", city);
 			obj.put("country", country);
@@ -206,6 +224,12 @@ public class Item {
 	}
 	public double getRating() {
 		return rating;
+	}
+	public String getDate() {
+		return date;
+	}
+	public String getByline() {
+		return byline;
 	}
 	public String getAddress() {
 		return address;
@@ -247,5 +271,33 @@ public class Item {
 		return snippetUrl;
 	}
 
+	public static String parseString(String str) {
+		return str.replace("\"", "\\\"").replace("/", " or ");
+	}
 
+	public static String jsonArrayToString(JSONArray array) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (int i = 0; i < array.length(); i++) {
+				String obj = (String) array.get(i);
+				sb.append(obj);
+				if (i != array.length() - 1) {
+					sb.append(",");
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+	}
+
+	public static JSONArray stringToJSONArray(String str) {
+		try {
+			return new JSONArray("[" + parseString(str) + "]");
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

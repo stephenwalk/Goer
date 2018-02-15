@@ -9,21 +9,41 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import db.ItemDBConnection;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import algorithm.GeoRecommendation;
+import algorithm.ItemBasedRecommendation;
+import db.DBConnection;
 import entity.Item;
 import entity.Item.ItemBuilder;
 import external.ExternalAPI;
 import external.ExternalAPIFactory;
 
-public class ItemMySQLConnection implements ItemDBConnection{
-	private Connection conn;
+public class MySQLConnection implements DBConnection {
 
-	public ItemMySQLConnection() {
+	private static MySQLConnection instance;
+
+	public static DBConnection getInstance() {
+		if (instance == null) {
+			instance = new MySQLConnection();
+		}
+		return instance;
+	}
+
+	private Connection conn = null;
+
+	private MySQLConnection() {
 		try {
+			// Forcing the class representing the MySQL driver to load and
+			// initialize.
+			// The newInstance() call is a work around for some broken Java
+			// implementations.
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(MySQLDBUtil.URL);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -43,8 +63,8 @@ public class ItemMySQLConnection implements ItemDBConnection{
 		if (conn == null) {
 			return;
 		}
-		String query = "INSERT INTO item_history (user_id, item_id) VALUES (?, ?)";
 		try {
+			String query = "INSERT INTO " + MySQLDBUtil.service + "_history (user_id, item_id) VALUES (?, ?)";
 			PreparedStatement statement = conn.prepareStatement(query);
 			for (String itemId : itemIds) {
 				statement.setString(1, userId);
@@ -52,7 +72,7 @@ public class ItemMySQLConnection implements ItemDBConnection{
 				statement.execute();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -61,8 +81,8 @@ public class ItemMySQLConnection implements ItemDBConnection{
 		if (conn == null) {
 			return;
 		}
-		String query = "DELETE FROM item_history WHERE user_id = ? and item_id = ?";
 		try {
+			String query = "DELETE FROM " + MySQLDBUtil.service + "_history WHERE user_id = ? and item_id = ?";
 			PreparedStatement statement = conn.prepareStatement(query);
 			for (String itemId : itemIds) {
 				statement.setString(1, userId);
@@ -70,7 +90,7 @@ public class ItemMySQLConnection implements ItemDBConnection{
 				statement.execute();
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
@@ -81,7 +101,7 @@ public class ItemMySQLConnection implements ItemDBConnection{
 		}
 		Set<String> favoriteItems = new HashSet<>();
 		try {
-			String sql = "SELECT item_id from item_history WHERE user_id = ?";
+			String sql = "SELECT item_id from " + MySQLDBUtil.service + "_history WHERE user_id = ?";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, userId);
 			ResultSet rs = statement.executeQuery();
@@ -90,10 +110,9 @@ public class ItemMySQLConnection implements ItemDBConnection{
 				favoriteItems.add(itemId);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		return favoriteItems;
-
 	}
 
 	@Override
@@ -106,7 +125,7 @@ public class ItemMySQLConnection implements ItemDBConnection{
 		try {
 
 			for (String itemId : itemIds) {
-				String sql = "SELECT * from items WHERE item_id = ? ";
+				String sql = "SELECT * from " + MySQLDBUtil.service + "s WHERE item_id = ? ";
 				PreparedStatement statement = conn.prepareStatement(sql);
 				statement.setString(1, itemId);
 				ResultSet rs = statement.executeQuery();
@@ -118,6 +137,8 @@ public class ItemMySQLConnection implements ItemDBConnection{
 				if (rs.next()) {
 					builder.setItemId(rs.getString("item_id"));
 					builder.setName(rs.getString("name"));
+					builder.setDate(rs.getString("date"));
+					builder.setByline(rs.getString("byline"));
 					builder.setCity(rs.getString("city"));
 					builder.setState(rs.getString("state"));
 					builder.setCountry(rs.getString("country"));
@@ -131,16 +152,95 @@ public class ItemMySQLConnection implements ItemDBConnection{
 					builder.setSnippetUrl(rs.getString("snippet_url"));
 					builder.setImageUrl(rs.getString("image_url"));
 					builder.setUrl(rs.getString("url"));
+					Set<String> categories = getCategories(itemId);
+					builder.setCategories(categories);
 				}
-
-				Set<String> categories = getCategories(itemId);
-				builder.setCategories(categories);
 				favoriteItems.add(builder.build());
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 		return favoriteItems;
+	}
+
+
+	@Override
+	public JSONArray recommendItems(String userId, double lat, double lon, String city) {
+		JSONArray itemsArray = new JSONArray();
+		List<Item> items;
+		if (MySQLDBUtil.service.equals("event")) {
+			GeoRecommendation recommendation = new GeoRecommendation();
+			items = recommendation.recommendItems(userId, MySQLDBUtil.service, lat, lon, city);
+		} else {
+			ItemBasedRecommendation recommendation = new ItemBasedRecommendation();
+			items = recommendation.recommendItems(userId, MySQLDBUtil.service, lat, lon, city);	
+		}
+		try {
+			for (Item item : items) {
+				JSONObject obj = item.toJSONObject();
+				obj.put("favorite", false);
+				itemsArray.put(obj);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return itemsArray;
+	}
+
+	@Override
+	public Set<String> getItemIds(String category) {
+		Set<String> set = new HashSet<>();
+		try {
+			String sql = "SELECT item_id from " + MySQLDBUtil.service + "s WHERE categories LIKE ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, "%" + category + "%");
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				String itemId = rs.getString("item_id");
+				set.add(itemId);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return set;
+	}
+
+	@Override
+	public Item getItemById(String itemId) {
+		try {
+			String sql = "SELECT * from " + MySQLDBUtil.service + "s where item_id = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, itemId);
+			ResultSet rs = statement.executeQuery();
+			ItemBuilder builder = new ItemBuilder();
+			if (rs.next()) {
+				builder.setItemId(rs.getString("item_id"));
+				builder.setName(rs.getString("name"));
+				builder.setDate(rs.getString("date"));
+				builder.setByline(rs.getString("byline"));
+				builder.setCity(rs.getString("city"));
+				builder.setState(rs.getString("state"));
+				builder.setCountry(rs.getString("country"));
+				builder.setZipcode(rs.getString("zipcode"));
+				builder.setRating(rs.getDouble("rating"));
+				builder.setAddress(rs.getString("address"));
+				builder.setLatitude(rs.getDouble("latitude"));
+				builder.setLongitude(rs.getDouble("longitude"));
+				builder.setDescription(rs.getString("description"));
+				builder.setSnippet(rs.getString("snippet"));
+				builder.setSnippetUrl(rs.getString("snippet_url"));
+				builder.setImageUrl(rs.getString("image_url"));
+				builder.setUrl(rs.getString("url"));
+				Set<String> categories = getCategories(itemId);
+				builder.setCategories(categories);
+				//JSONObject obj = builder.build().toJSONObject();
+				//obj.put("favorite", isVisited);
+				return builder.build();
+			}
+		} catch (Exception e) { /* report an error */
+			System.out.println(e.getMessage());
+		}
+		return null;
 	}
 
 	@Override
@@ -150,12 +250,16 @@ public class ItemMySQLConnection implements ItemDBConnection{
 		}
 		Set<String> categories = new HashSet<>();
 		try {
-			String sql = "SELECT category from categories WHERE item_id = ? ";
+			String sql = "SELECT categories from " + MySQLDBUtil.service + "s WHERE item_id = ? ";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, itemId);
 			ResultSet rs = statement.executeQuery();
-			while (rs.next()) {
-				categories.add(rs.getString("category"));
+			if (rs.next()) {
+				String[] tokens = rs.getString("categories").split(",");
+				for (String token : tokens) {
+					// ' Japanese ' -> 'Japanese'
+					categories.add(token.trim());
+				}
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -164,12 +268,12 @@ public class ItemMySQLConnection implements ItemDBConnection{
 	}
 
 	@Override
-	public List<Item> searchItems(String userId, double lat, double lon, String term) {
+	public List<Item> searchItems(String userId, double lat, double lon, String city, String term) {
 		// Connect to external API
-		ExternalAPI api = ExternalAPIFactory.getExternalAPI(); // moved here
-		List<Item> items = api.search(lat, lon, term);
+		ExternalAPI api = ExternalAPIFactory.getExternalAPI(MySQLDBUtil.service);
+		List<Item> items = api.search(lat, lon, city, term);
 		for (Item item : items) {
-			// Save the item into our own db.
+			// Save the item into db.
 			saveItem(item);
 		}
 		return items;
@@ -181,43 +285,34 @@ public class ItemMySQLConnection implements ItemDBConnection{
 			return;
 		}
 		try {
-			// First, insert into items table
-			String sql = "INSERT IGNORE INTO items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
+			String sql = "INSERT IGNORE INTO " + MySQLDBUtil.service + "s VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, item.getItemId());
 			statement.setString(2, item.getName());
-			statement.setString(3, item.getCity());
-			statement.setString(4, item.getState());
-			statement.setString(5, item.getCountry());
-			statement.setString(6, item.getZipcode());
-			statement.setDouble(7, item.getRating());
-			statement.setString(8, item.getAddress());
-			statement.setDouble(9, item.getLatitude());
-			statement.setDouble(10, item.getLongitude());
-			statement.setString(11, item.getDescription());
-			statement.setString(12, item.getSnippet());
-			statement.setString(13, item.getSnippetUrl());
-			statement.setString(14, item.getImageUrl());
-			statement.setString(15, item.getUrl());
+			statement.setString(3, item.getDate());
+			statement.setString(4, item.getByline());
+			statement.setString(5, String.join(",", item.getCategories()));
+			statement.setString(6, item.getCity());
+			statement.setString(7, item.getState());
+			statement.setString(8, item.getCountry());
+			statement.setString(9, item.getZipcode());
+			statement.setString(10, item.getAddress());
+			statement.setDouble(11, item.getRating());
+			statement.setDouble(12, item.getLatitude());
+			statement.setDouble(13, item.getLongitude());
+			statement.setString(14, item.getDescription());
+			statement.setString(15, item.getSnippet());
+			statement.setString(16, item.getSnippetUrl());
+			statement.setString(17, item.getImageUrl());
+			statement.setString(18, item.getUrl());
 			statement.execute();
-
-			// Second, update categories table for each category.
-			sql = "INSERT IGNORE INTO categories VALUES (?,?)";
-			for (String category : item.getCategories()) {
-				statement = conn.prepareStatement(sql);
-				statement.setString(1, item.getItemId());
-				statement.setString(2, category);
-				statement.execute();
-			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
-
 	}
 
 	@Override
-	public String getFullname(String userId) {
+	public String getFullName(String userId) {
 		if (conn == null) {
 			return null;
 		}
@@ -254,8 +349,8 @@ public class ItemMySQLConnection implements ItemDBConnection{
 			System.out.println(e.getMessage());
 		}
 		return false;
-
 	}
+
 	@Override
 	public boolean exist(String userId) {
 		if (conn == null) {
@@ -280,8 +375,8 @@ public class ItemMySQLConnection implements ItemDBConnection{
 		if (conn == null) {
 			return;
 		}
-		String query = "INSERT INTO users (user_id, password, first_name, last_name) VALUES (?, ?, ?, ?)";
 		try {
+			String query = "INSERT INTO users (user_id, password, first_name, last_name) VALUES (?, ?, ?, ?)";
 			PreparedStatement statement = conn.prepareStatement(query);
 			statement.setString(1, userId);
 			statement.setString(2, password);
@@ -289,7 +384,7 @@ public class ItemMySQLConnection implements ItemDBConnection{
 			statement.setString(4, lastName);
 			statement.execute();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 	}
 
